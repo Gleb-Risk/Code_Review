@@ -1,15 +1,4 @@
-#FIXME: Docstring
-#FIXME: Очевидные комментарии
-#TODO:
 class Node:
-    """
-        Конструктор узла дерева.
-
-        :param val: Значение узла (число или код оператора)
-        :param left: Левый потомок
-        :param right: Правый потомок
-        :return: None
-        """
     def __init__(self, val, left=None, right=None):
         self.val = val
         self.left = left
@@ -17,12 +6,6 @@ class Node:
 
 
 def build_tree_from_rpn(expression):
-    """
-    Строит дерево выражения из строки в обратной польской записи.
-
-    :param expression: Строка с выражением в ОПН (токены через пробел)
-    :return: Корень построенного дерева или None, если выражение пустое
-    """
     stack = []
     for token in expression.split():
         if token.lstrip('-').isdigit():
@@ -37,12 +20,6 @@ def build_tree_from_rpn(expression):
 
 
 def evaluate_tree(node):
-    """
-    Рекурсивно вычисляет значение поддерева.
-
-    :param node: Корень поддерева для вычисления
-    :return: Числовое значение выражения в поддереве
-    """
     if node.val >= 0:  
         return node.val
     
@@ -62,12 +39,6 @@ def evaluate_tree(node):
 
 
 def simplify_tree(node):
-    """
-    Упрощает дерево, сворачивая поддеревья умножения в листы.
-
-    :param node: Корень поддерева для упрощения
-    :return: Новый корень упрощенного поддерева
-    """
     if node is None:
         return None
     
@@ -82,22 +53,11 @@ def simplify_tree(node):
 
 
 def read_expression_from_file(filename):
-    """
-    Читает выражение из текстового файла.
-
-    :param filename: Путь к файлу с выражением
-    :return: Строка с выражением в обратной польской записи
-    """
     with open(filename, 'r') as f:
         return f.read().strip()
 
 
 def main():
-    """
-    Точка входа в программу. Читает файл, строит и упрощает дерево.
-
-    :return: None
-    """
     filename = "expression.txt"
     
     expr = read_expression_from_file(filename)
