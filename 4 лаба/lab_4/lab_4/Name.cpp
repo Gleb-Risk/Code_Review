@@ -1,32 +1,36 @@
 #include "Name.h"
 
+// FIXED: добавлена пустая строка между своей группой include
+//        и системной
 #include <iostream>
-// #FIXME: между своей группой include ("Name.h") и системной (<iostream>)
-//         по Google Style должна быть пустая строка:
-//         #include "Name.h"
-//         (пустая строка)
-//         #include <iostream>
 
-Name::Name(std::string s, std::string f, std::string p) {
-  surname = s;
-  first = f;
-  patronymic = p;
-}
+// FIXED: добавлена пустая строка после блока #include
+
+// FIXED: инициализация вынесена в список инициализации,
+//        параметры переименованы
+Name::Name(std::string surname, std::string first, std::string patronymic)
+    : surname(surname), first(first), patronymic(patronymic) {}
 
 std::string Name::str() const {
   std::string result;
 
-  if (surname != "") {
+  // FIXED: сравнение != "" заменено на !.empty()
+  if (!surname.empty()) {
     result += surname;
   }
-  if (first != "") {
-    if (result != "") 
-    result += " ";
+  if (!first.empty()) {
+    // FIXED: исправлены отступы, добавлены фигурные скобки
+    if (!result.empty()) {
+      result += " ";
+    }
     result += first;
   }
-  if (patronymic != "") {
-    if (result != "") result += " ";
-      result += patronymic;
+  if (!patronymic.empty()) {
+    // FIXED: исправлены отступы, добавлены фигурные скобки
+    if (!result.empty()) {
+      result += " ";
+    }
+    result += patronymic;
   }
 
   return result;
