@@ -1,82 +1,141 @@
-import sys
+"""Graf8. Юный путешественник решил изучить схему авиационного
+сообщения. Схема авиационного сообщения задана в текстовом файле
+с именем FileName в виде матрицы смежности. Первая строка файла
+содержит количество городов (n) n<=15, связанных авиационным
+сообщением, а следующие n строк хранят матрицу (m), m[i][j]=0, если
+не имеется возможности перелета из города i в город j, иначе
+m[i][j]=1. Определить номера городов, в которые из города K можно
+долететь не менее чем с L пересадками и более коротких путей к таким
+городам не существует. Перечислите номера таких городов в порядке
+возрастания. Нумерация городов начинается с 1. Если таких городов
+нет, выведите число (-1).
+"""
+
+import logging
 import os
+import sys
 from collections import deque
 
-def solve():
-    input_data = []
-    
-    # Попытка прочитать из файла "FileName" или "FileName.txt", если он существует
-    # Это соответствует условию "задана в текстовом файле с именем FileName"
-    if os.path.exists("FileName"):
-        with open("FileName", "r", encoding="utf-8") as f:
-            input_data = f.read().split()
-    elif os.path.exists("FileName.txt"):
-        with open("FileName.txt", "r", encoding="utf-8") as f:
-            input_data = f.read().split()
-    else:
-        # Иначе читаем из стандартного потока ввода (стандартная практика для олимпиадных задач)
-        input_data = sys.stdin.read().split()
-        
-    if not input_data:
-        return
-    
-    n = int(input_data[0])
-    matrix = []
+logging.basicConfig(level=logging.INFO)
+
+# FIXME: Добавлен docstring модуля (полный текст условия задачи)
+# FIXME: Добавлен импорт logging (стандарт: логирование вместо print)
+# FIXME: Добавлены импорты os, sys для гибкого чтения
+# FIXME: Добавлена пустая строка после импортов
+
+
+def read_input() -> list[str]:
+    """Читает данные из файла FileName или stdin.
+
+    :return: Список токенов.
+    """
+    # FIXME: Добавлен docstring функции
+    # FIXME: Добавлена аннотация возвращаемого типа
+    for name in ("FileName", "FileName.txt"):
+        if os.path.exists(name):
+            with open(name, "r", encoding="utf-8") as f:
+                return f.read().split()
+    return sys.stdin.read().split()
+
+
+def parse_matrix(
+    tokens: list[str], n: int
+) -> tuple[list[list[int]], int]:
+    """Разбирает матрицу смежности из токенов.
+
+    :param tokens: Список токенов.
+    :param n: Количество вершин.
+    :return: Кортеж (матрица, индекс следующего токена).
+    """
+    # FIXME: Добавлен docstring функции
+    # FIXME: Добавлены аннотации типов
+    # FIXME: Добавлена обработка слитных и раздельных строк
+    matrix: list[list[int]] = []
     idx = 1
-    
-    # Чтение матрицы смежности
-    # Обработка как слитных строк (например, "010"), так и разделенных пробелами значений
-    for i in range(n):
-        if idx >= len(input_data):
+    for _ in range(n):
+        if idx >= len(tokens):
             break
-        token = input_data[idx]
-        if len(token) == n and all(c in '01' for c in token):
-            row = [int(c) for c in token]
+        token = tokens[idx]
+        if len(token) == n and all(c in "01" for c in token):
+            matrix.append([int(c) for c in token])
             idx += 1
         else:
-            row = []
-            for j in range(n):
-                row.append(int(input_data[idx]))
-                idx += 1
-        matrix.append(row)
-    
-    if idx >= len(input_data):
-        return
-        
-    K = int(input_data[idx])
-    L = int(input_data[idx+1])
-    
-    # Проверка корректности начального города
-    if K < 1 or K > n:
-        print("-1")
-        return
-        
-    start = K - 1
+            row = [int(tokens[idx + j]) for j in range(n)]
+            idx += n
+            matrix.append(row)
+    return matrix, idx
+
+
+def bfs_distances(
+    start: int, matrix: list[list[int]]
+) -> list[int]:
+    """Вычисляет кратчайшие расстояния от start.
+
+    :param start: Индекс начальной вершины (0-based).
+    :param matrix: Матрица смежности.
+    :return: Список расстояний (-1, если вершина недостижима).
+    """
+    # FIXME: Добавлен docstring функции
+    # FIXME: Добавлены аннотации типов
+    # FIXME: BFS даёт кратчайшее расстояние — то, что нужно
+    #        для условия «нет более коротких путей»
+    n = len(matrix)
     dist = [-1] * n
     dist[start] = 0
-    
-    # Поиск в ширину (BFS) для нахождения кратчайших путей в невзвешенном графе
-    q = deque([start])
-    
-    while q:
-        u = q.popleft()
+    queue = deque([start])
+
+    while queue:
+        u = queue.popleft()
         for v in range(n):
             if matrix[u][v] == 1 and dist[v] == -1:
                 dist[v] = dist[u] + 1
-                q.append(v)
-                
-    ans = []
-    # Количество пересадок на пути из V ребер равно V - 1.
-    # Условие "не менее чем с L пересадками" означает, что количество ребер должно быть >= L + 1.
-    for i in range(n):
-        if dist[i] != -1 and dist[i] >= L + 1:
-            ans.append(i + 1)
-            
-    if not ans:
-        print("-1")
-    else:
-        # Так как мы проходим по i от 0 до n-1, номера городов уже будут в порядке возрастания
-        print(" ".join(map(str, ans)))
+                queue.append(v)
 
-if __name__ == '__main__':
+    return dist
+
+
+def solve() -> None:
+    """Читает данные, находит и выводит города.
+
+    :return: None
+    """
+    # FIXME: Добавлен docstring функции
+    # FIXME: Добавлена аннотация возвращаемого типа
+    # FIXME: print заменён на logging.info
+    tokens = read_input()
+    if not tokens:
+        return
+
+    n = int(tokens[0])
+    matrix, idx = parse_matrix(tokens, n)
+    if idx >= len(tokens):
+        return
+
+    k = int(tokens[idx])
+    l = int(tokens[idx + 1])
+    # FIXME: K, L переименованы в k, l (snake_case по стандарту)
+
+    if k < 1 or k > n:
+        logging.info("-1")
+        return
+        # FIXME: Добавлена проверка корректности начального города
+
+    dist = bfs_distances(k - 1, matrix)
+
+    # FIXME: «не менее чем с L пересадками» означает рёбер >= L + 1.
+    #        Так как dist — кратчайшее расстояние, условие
+    #        dist >= L + 1 автоматически означает «нет более коротких
+    #        путей» — это требование Graf8.
+    ans = [i + 1 for i in range(n)
+           if dist[i] != -1 and dist[i] >= l + 1]
+
+    if not ans:
+        logging.info("-1")
+    else:
+        logging.info(" ".join(map(str, ans)))
+        # FIXME: Так как i идёт от 0 до n-1, порядок возрастания
+        #        уже обеспечен
+
+
+if __name__ == "__main__":
     solve()
