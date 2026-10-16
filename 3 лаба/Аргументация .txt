@@ -4,7 +4,6 @@ Qween_*.py лучше остальных по Pythonstyle.docx, потому ч�
 
 Есть if __name__ == "__main__" — у GPT_2.py и GPT_3.py его нет, код выполняется при импорте.
 
-Qween_2 — вывод id(root) — правильный указатель (у DeepSeek — объект) + try/except FileNotFoundError + нет бага в evaluate;
 
 
 
