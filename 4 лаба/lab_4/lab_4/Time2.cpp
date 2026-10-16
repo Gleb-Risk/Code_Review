@@ -1,31 +1,36 @@
 #include "Time2.h"
 
+// FIXED: добавлена пустая строка между своей группой include
+//        и системной
 #include <iostream>
 
-// #FIXME: между своей группой include ("Employee.h") и системной
-//         (<iostream>) по Google Style должна быть пустая строка:
-//             #include "Employee.h"
-//             (пустая строка)
-//             #include <iostream>
-// #FIXME: пустая строка между группой #include и кодом.
+// FIXED: добавлена пустая строка после блока #include
 
-Time2::Time2(int s) {
-  seconds = s;
-}
+namespace {
+// FIXED: магические числа заменены именованными константами
+constexpr int kSecondsPerDay = 86400;
+constexpr int kSecondsPerHour = 3600;
+constexpr int kSecondsPerMinute = 60;
+}  // namespace
 
-Time2::Time2(int h, int m, int s) : Time2(h * 3600 + m * 60 + s) {
-}
+// FIXED: инициализация вынесена в список инициализации
+Time2::Time2(int seconds) : seconds(seconds) {}
+
+// FIXED: делегирующий конструктор, параметры переименованы,
+//        магические числа заменены константами
+Time2::Time2(int hours, int minutes, int seconds)
+    : Time2(hours * kSecondsPerHour + minutes * kSecondsPerMinute + seconds) {}
 
 int Time2::hour() const {
-  return (seconds % 86400) / 3600;
+  return (seconds % kSecondsPerDay) / kSecondsPerHour;
 }
 
 int Time2::minute() const {
-  return (seconds % 3600) / 60;
+  return (seconds % kSecondsPerHour) / kSecondsPerMinute;
 }
 
 int Time2::second() const {
-  return seconds % 60;
+  return seconds % kSecondsPerMinute;
 }
 
 std::string Time2::str() const {
