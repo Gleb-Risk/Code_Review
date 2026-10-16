@@ -1,22 +1,29 @@
 #include "Time.h"
 
+// FIXED: добавлена пустая строка между своей группой include
+//        и системной
 #include <iostream>
-// #FIXME: между своей группой include ("Time.h") и системной
-//         (<iostream>) по Google Style должна быть пустая строка:
-//             #include "Time.h"
-//             (пустая строка)
-//             #include <iostream>
 
-Time::Time(int s) {
-  seconds = s;
-}
+// FIXED: добавлена пустая строка после блока #include
+
+namespace {
+// FIXED: магические числа заменены именованными константами
+constexpr int kSecondsPerDay = 86400;
+constexpr int kSecondsPerHour = 3600;
+constexpr int kSecondsPerMinute = 60;
+}  // namespace
+
+// FIXED: инициализация вынесена в список инициализации,
+//        параметр s -> seconds
+Time::Time(int seconds) : seconds(seconds) {}
 
 std::string Time::str() const {
-  int total = seconds % 86400;
+  // FIXED: магические числа заменены константами
+  int total = seconds % kSecondsPerDay;
 
-  int h = total / 3600;
-  int m = (total % 3600) / 60;
-  int s = total % 60;
+  int h = total / kSecondsPerHour;
+  int m = (total % kSecondsPerHour) / kSecondsPerMinute;
+  int s = total % kSecondsPerMinute;
 
   std::string result;
   result += std::to_string(h) + ":";
